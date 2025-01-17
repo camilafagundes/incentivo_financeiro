@@ -1,0 +1,82 @@
+def coletar_dados():
+    print("Por favor, insira os dados solicitados para verificar a aptidão para crédito:")
+    
+    receita_bruta = float(input("Receita Bruta Anual (em R$): "))
+    fluxo_caixa = int(input("Fluxo de Caixa (Média de quantidade de clientes anual): "))
+    capacidade_pagamento = float(input("Capacidade de Pagamento (Extrato bancário dos últimos 3 meses - R$): "))
+    historico_credito = input("Histórico de Crédito (Receita Federal, sem pendências) (sim/não): ").strip().lower()
+    
+    return receita_bruta, fluxo_caixa, capacidade_pagamento, historico_credito
+
+
+def verificar_aptidao(receita_bruta, fluxo_caixa, capacidade_pagamento, historico_credito):
+    
+    apta_para_credito = False
+    apta_para_investimento = False
+    condicoes = {}
+
+    if receita_bruta <= 360000:  # Microempresa
+        if fluxo_caixa >= 10000 and capacidade_pagamento >= 5000 and historico_credito == "sim":
+            apta_para_credito = True
+            condicoes["Crédito"] = {
+                "tipo": "Capital de Giro",
+                "juros": "1,5% ao mês",
+                "prazo": "12 meses"
+            }
+        if fluxo_caixa >= 15000 and capacidade_pagamento >= 8000 and historico_credito == "sim":
+            apta_para_investimento = True
+            condicoes["Investimento"] = {
+                "tipo": "Investimento em Equipamentos",
+                "juros": "2% ao mês",
+                "prazo": "24 meses"
+            }
+
+    elif receita_bruta <= 4800000:  # EPP (empresa de pequeno porte)
+        if fluxo_caixa >= 20000 and capacidade_pagamento >= 10000 and historico_credito == "sim":
+            apta_para_credito = True
+            condicoes["Crédito"] = {
+                "tipo": "Capital de Giro",
+                "juros": "1,2% ao mês",
+                "prazo": "24 meses"
+            }
+        if fluxo_caixa >= 25000 and capacidade_pagamento >= 12000 and historico_credito == "sim":
+            apta_para_investimento = True
+            condicoes["Investimento"] = {
+                "tipo": "Investimento em Equipamentos e Expansão",
+                "juros": "1,8% ao mês",
+                "prazo": "36 meses"
+            }
+    
+    return apta_para_credito, apta_para_investimento, condicoes
+
+
+def exibir_resultado(apta_para_credito, apta_para_investimento, condicoes):
+    if apta_para_credito or apta_para_investimento:
+        print("\nA sua empresa está apta a receber crédito!")
+        
+        if apta_para_credito:
+            print("\nOpção disponível para Crédito (Capital de Giro):")
+            print(f"Tipo: {condicoes['Crédito']['tipo']}")
+            print(f"Juros: {condicoes['Crédito']['juros']}")
+            print(f"Prazo: {condicoes['Crédito']['prazo']}")
+        
+        if apta_para_investimento:
+            print("\nOpção disponível para Investimento:")
+            print(f"Tipo: {condicoes['Investimento']['tipo']}")
+            print(f"Juros: {condicoes['Investimento']['juros']}")
+            print(f"Prazo: {condicoes['Investimento']['prazo']}")
+    else:
+        print("\nInfelizmente, sua empresa não está apta a receber crédito ou investimentos no momento.")
+
+
+def main():
+    receita_bruta, fluxo_caixa, capacidade_pagamento, historico_credito = coletar_dados()
+    
+    apta_para_credito, apta_para_investimento, condicoes = verificar_aptidao(
+        receita_bruta, fluxo_caixa, capacidade_pagamento, historico_credito
+    )
+    
+    exibir_resultado(apta_para_credito, apta_para_investimento, condicoes)
+
+if __name__ == "__main__":
+    main()
